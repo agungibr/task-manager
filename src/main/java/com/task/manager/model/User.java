@@ -1,11 +1,13 @@
 package com.task.manager.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-// import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
@@ -13,18 +15,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "user_task_id")
+@Table(name = "users")
 
 public class User{
     @Id @GeneratedValue
-    private String UserId;
+    private Long userId;
 
-    private String UserName;
-    private String UserEmail;
-    private String Password;
-
-    // @JsonIgnore
-    // @OneToMany(mappedBy = "taskId")
-    // private TaskList<Task> taskList;
-
+    private String username;
+    private String email;
+    private String password;
 }
