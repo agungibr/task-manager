@@ -41,4 +41,32 @@ public class TaskController {
     public Task addTaskWithBody(@RequestBody Task task) {
         return taskRepository.save(task);
     }
+
+    @GetMapping("/{id}")
+    public Task getTaskById(@PathVariable Long id) {
+        return taskRepository.findById(id).orElse(null);
+    }
+
+    @GetMapping("/user/{userId}")
+    public List<Task> getTasksByUserId(@PathVariable Long userId) {
+        return taskRepository.findAll().stream()
+                .filter(task -> userId.equals(task.getUserId()))
+                .toList();
+    }
+
+    @PutMapping("/update/{id}")
+    public Task updateTask(@PathVariable Long id, @RequestBody Task updatedTask) {
+        return taskRepository.findById(id).map(task -> {
+            task.setTitle(updatedTask.getTitle());
+            task.setDescription(updatedTask.getDescription());
+            task.setDueDate(updatedTask.getDueDate());
+            // Optionally update userId or other fields
+            return taskRepository.save(task);
+        }).orElse(null);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public void deleteTask(@PathVariable Long id) {
+        taskRepository.deleteById(id);
+    }
 }
