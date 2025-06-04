@@ -1,42 +1,42 @@
 package com.task.manager.model;
 
+import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Table(name = "tasks")  
+@Data  
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Table(name = "Task")
-@Getter
-@Setter
-
-
 public class Task {
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long taskId;
+    private Long id; 
 
     @Column(nullable = false)
-    private Long userId; // References User.userId
+    private Long userId;
+
+    @Column(nullable = false) 
     private String title;
+
     private String description;
-    private LocalDateTime createdAt; // Set when user submits the task
+    private LocalDateTime createdAt;
     private LocalDateTime dueDate;
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
-
-    // taskId is used for get, post, put, and database operations
-    // Retrievals: get all, get by taskId, get by userId (handled in repository/service)
 }

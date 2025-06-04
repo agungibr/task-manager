@@ -1,72 +1,60 @@
 package com.task.manager.controller;
 
-import org.springframework.web.bind.annotation.*;
-import com.task.manager.model.Task;
-import com.task.manager.repository.TaskRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.task.manager.model.Task;
+import com.task.manager.service.TaskService;
+
+import lombok.RequiredArgsConstructor;
+
 @RestController
-@CrossOrigin("*")
-@RequestMapping("/task")
+@RequestMapping("/tasks")  
+@RequiredArgsConstructor 
 public class TaskController {
 
-    @Autowired
-    private TaskRepository taskRepository;
+    private final TaskService taskService;
 
-    @GetMapping("/getTask")
-    public String getTask() {
-        return "Hello Task";
+    @GetMapping
+    public ResponseEntity<List<Task>> getAllTasks() {
+        return ResponseEntity.ok(taskService.getAllTasks());
     }
 
-    @GetMapping("/all")
-    public List<Task> getAllTask() {
-        return taskRepository.findAll();
-    }
-
-    @PostMapping("/add")
-    public Task addTask(@RequestBody Task task) {
-        return taskRepository.save(task);
-    }
-
-    @PostMapping("/addWithParams")
-    public Task addTaskWithParams(@RequestParam String title, @RequestParam String description) {
-        Task task = new Task();
-        task.setTitle(title);
-        task.setDescription(description);
-        return taskRepository.save(task);
-    }
-
-    @PostMapping("/addWithBody")
-    public Task addTaskWithBody(@RequestBody Task task) {
-        return taskRepository.save(task);
+    @PostMapping
+    public ResponseEntity<Task> createTask(@RequestBody Task task) {
+        return ResponseEntity.ok(taskService.createTask(task));
     }
 
     @GetMapping("/{id}")
-    public Task getTaskById(@PathVariable Long id) {
-        return taskRepository.findById(id).orElse(null);
+    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
+        return ResponseEntity.ok(taskService.getTaskById(id));
     }
 
     @GetMapping("/user/{userId}")
-    public List<Task> getTasksByUserId(@PathVariable Long userId) {
-        return taskRepository.findAll().stream()
-                .filter(task -> userId.equals(task.getUserId()))
-                .toList();
+    public ResponseEntity<List<Task>> getTasksByUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(taskService.getTasksByUserId(userId));
     }
 
-    @PutMapping("/update/{id}")
-    public Task updateTask(@PathVariable Long id, @RequestBody Task updatedTask) {
-        return taskRepository.findById(id).map(task -> {
-            task.setTitle(updatedTask.getTitle());
-            task.setDescription(updatedTask.getDescription());
-            task.setDueDate(updatedTask.getDueDate());
-            // Optionally update userId or other fields
-            return taskRepository.save(task);
-        }).orElse(null);
+    @PutMapping("/{id}")
+    public ResponseEntity<Task> updateTask(
+            @PathVariable Long id,
+            @RequestBody Task updatedTask
+    ) {
+        return ResponseEntity.ok(taskService.updateTask(id, updatedTask));
     }
 
-    @DeleteMapping("/delete/{id}")
-    public void deleteTask(@PathVariable Long id) {
-        taskRepository.deleteById(id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+        taskService.deleteTask(id);
+        return ResponseEntity.noContent().build();
     }
 }
