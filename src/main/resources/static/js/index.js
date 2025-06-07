@@ -1,15 +1,51 @@
 document.addEventListener('DOMContentLoaded', function() {
-    
-    const fadeInElements = document.querySelectorAll('.left h1, .left .tagline, .left .cta, .task-card');
+    const mainHeading = document.querySelector('.left h1');
+    if (mainHeading) {
+        const originalText = mainHeading.textContent.trim();
+        
+        mainHeading.innerHTML = '';
+        mainHeading.style.opacity = '1';
+        mainHeading.style.transform = 'translateY(0)';
+        
+        const textContainer = document.createElement('span');
+        const cursor = document.createElement('span');
+        cursor.textContent = '|';
+        cursor.style.animation = 'blink 1s infinite';
+        cursor.style.color = '#1E90FF';
+        cursor.style.fontWeight = 'normal';
+        
+        mainHeading.appendChild(textContainer);
+        mainHeading.appendChild(cursor);
+        
+        let charIndex = 0;
+        const typeChar = () => {
+            if (charIndex < originalText.length) {
+                textContainer.textContent = originalText.substring(0, charIndex + 1);
+                charIndex++;
+                
+                const randomDelay = Math.random() * 50 + 80; 
+                setTimeout(typeChar, randomDelay);
+            } else {
+                setTimeout(() => {
+                    cursor.style.opacity = '0';
+                    cursor.style.transition = 'opacity 0.5s ease';
+                }, 800);
+            }
+        };
+        
+        setTimeout(typeChar, 300);
+    }
+
+    const fadeInElements = document.querySelectorAll('.left .tagline, .left .cta, .task-card');
     fadeInElements.forEach((element, index) => {
         element.style.opacity = '0';
-        element.style.transform = 'translateY(20px)';
-        element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        element.style.transform = 'translateY(30px)';
+        element.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
         
         setTimeout(() => {
             element.style.opacity = '1';
             element.style.transform = 'translateY(0)';
-        }, index * 150);
+        }, 1500 + (index * 300));
     });
 
     document.querySelectorAll('nav a[href^="#"]').forEach(link => {
@@ -20,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (targetSection) {
                 const headerHeight = document.querySelector('header').offsetHeight;
-                const targetPosition = targetSection.offsetTop - headerHeight - 20; // 20px extra padding
+                const targetPosition = targetSection.offsetTop - headerHeight - 20;
                 
                 window.scrollTo({
                     top: targetPosition,

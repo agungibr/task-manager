@@ -1,104 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Task Manager - Register</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: conic-gradient(from 0deg at center, #4E71FF, #8DD8FF, #BBFBFF, #4E71FF);
-      color: #1F2937;
-    }
-    .brand-text {
-      background: linear-gradient(90deg, #5409DA, #4E71FF);
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-weight: 700;
-      font-size: 1.5rem;
-    }
-    .btn-gradient {
-      background-color: #5409DA;
-      color: white;
-    }
-    .btn-gradient:hover {
-      background-image: linear-gradient(to right, #5409DA, #4E71FF);
-      transition: background-image 0.3s ease, opacity 0.3s ease;
-    }
-    .input-bg {
-      background-color: #ffffff;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/register.css">
 </head>
 <body>
-  <!-- Navbar -->
-  <nav class="p-6 flex justify-between items-center bg-white shadow-sm">
-    <div class="flex items-center space-x-3">
-      <span class="brand-text">Task Manager</span>
-    </div>
-    <a href="../index.html" class="text-sm text-gray-600 hover:text-indigo-600 font-medium">Home</a>
-  </nav>
+  <div class="back-container">
+    <a href="login.html" class="back-button">
+      <i class="fas fa-arrow-left"></i> Back
+    </a>
+  </div>
 
-  <!-- Register Section -->
-  <main class="flex items-center justify-center min-h-screen px-4 py-10">
-    <div class="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl">
-      <div class="mb-8 text-center">
-        <h2 class="text-3xl font-bold text-[#5409DA] leading-snug">Create Account</h2>
-        <p class="text-sm text-gray-500 leading-normal">Join Task Manager to start organizing your tasks</p>
-      </div>
-
-      <form action="/user/register" method="POST" class="space-y-6">
-        <div>
-          <label for="nama_lengkap" class="block text-sm font-medium text-gray-700">Full Name</label>
-          <input id="nama_lengkap" name="nama_lengkap" type="text" required
-            class="mt-1 w-full px-4 py-3 rounded-lg border border-gray-300 input-bg placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4E71FF]"
-            placeholder="your full name">
+  <section class="register-section">
+    <div class="spacer"></div>
+    
+    <div class="register-container">
+      <div class="register-card">
+        <div class="register-header">
+          <h2>Join Task Manager!</h2>
+          <p>Create your account to start organizing your tasks smartly</p>
         </div>
 
-        <div>
-          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-          <input id="email" name="email" type="email" required
-            class="mt-1 w-full px-4 py-3 rounded-lg border border-gray-300 input-bg placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4E71FF]"
-            placeholder="your@email.com">
+        <form action="/user/register" method="POST" class="register-form">
+          <div class="form-group">
+            <label for="nama_lengkap">Username</label>
+            <input type="text" id="nama_lengkap" name="nama_lengkap" required placeholder="Your username">
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required placeholder="your@email.com">
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required placeholder="••••••••">
+          </div>
+
+          <div class="form-group">
+            <label for="confirm_password">Confirm Password</label>
+            <input type="password" id="confirm_password" name="confirm_password" required placeholder="••••••••">
+          </div>
+
+          <div class="terms-checkbox">
+            <input type="checkbox" id="terms" name="terms" required>
+            <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</label>
+          </div>
+
+          <button type="submit" class="register-button">
+            Create Account
+          </button>
+        </form>
+
+        <div class="signin-link">
+          Already have an account?
+          <a href="login.html">Sign in</a>
         </div>
-
-        <div>
-          <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-          <input id="password" name="password" type="password" required
-            class="mt-1 w-full px-4 py-3 rounded-lg border border-gray-300 input-bg placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4E71FF]"
-            placeholder="••••••••">
-        </div>
-
-        <div>
-          <label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-          <input id="confirm_password" name="confirm_password" type="password" required
-            class="mt-1 w-full px-4 py-3 rounded-lg border border-gray-300 input-bg placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4E71FF]"
-            placeholder="••••••••">
-        </div>
-
-        <div class="flex items-start text-sm text-gray-500 leading-snug">
-          <input id="terms" name="terms" type="checkbox" class="mt-1 h-4 w-4 text-[#4E71FF] border-gray-300 rounded focus:ring-[#4E71FF]" required>
-          <label for="terms" class="ml-2">I agree to the <a href="#" class="text-[#4E71FF] hover:underline">Terms of Service</a> and <a href="#" class="text-[#4E71FF] hover:underline">Privacy Policy</a>.</label>
-        </div>
-
-        <button type="submit" class="w-full py-3 px-4 rounded-lg font-semibold btn-gradient transition duration-300">
-          Create Account
-        </button>
-      </form>
-
-      <div class="mt-6 text-center text-gray-500 text-sm">
-        Already have an account?
-        <a href="login.html" class="text-[#5409DA] hover:text-indigo-600 transition-colors duration-200 font-medium">Sign in</a>
       </div>
     </div>
-  </main>
+    
+    <div class="spacer"></div>
+    <p class="footer-text">© 2025 Task Manager. All rights reserved.</p>
 
-  <footer class="bg-white py-0.5">
-    <div class="text-center py-6 text-gray-400 text-sm">
-    © 2025 Task Manager. All rights reserved.
-  </footer>
+  </section>
 </body>
+<script src="../js/register.js"></script>
 </html>
