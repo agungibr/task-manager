@@ -30,11 +30,18 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         return userService.findByEmail(loginRequest.email())
                 .filter(user -> passwordEncoder.matches(loginRequest.password(), user.getPassword()))
-                .map(user -> ResponseEntity.ok("Login successful"))
-                .orElse(ResponseEntity.status(401).body("Invalid email or password"));
+                .map(user -> {
+                    UserResponse userResponse = new UserResponse(
+                        user.getUserId(),
+                        user.getUsername(),
+                        user.getEmail()
+                    );
+                    return ResponseEntity.ok((Object) userResponse);
+                })
+                .orElse(ResponseEntity.status(401).body((Object) "Invalid email or password"));
     }
 
     @ExceptionHandler(UserService.UserAlreadyExistsException.class)
@@ -42,5 +49,6 @@ public class UserController {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
-    record LoginRequest(String email, String password) {}
+    public record LoginRequest(String email, String password) {}
+    public record UserResponse(Long userId, String username, String email) {}
 }

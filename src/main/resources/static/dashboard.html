@@ -3,31 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Task Manager - Dashboard</title>
+  <title>Dashboard</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
   <div class="dashboard-container">
-    <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-logo">Task Manager</div>
       <nav class="sidebar-nav">
         <a href="#" class="active"><i class="fas fa-tasks"></i> <span>Tasks</span></a>
-        <a href="#"><i class="fas fa-project-diagram"></i> <span>Projects</span></a>
-        <a href="#"><i class="fas fa-calendar-alt"></i> <span>Calendar</span></a>
-        <a href="#"><i class="fas fa-chart-line"></i> <span>Reports</span></a>
-        <a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a>
       </nav>
       <div class="sidebar-footer">
         <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
       </div>
     </aside>
 
-    <!-- Main Content -->
     <div class="main-content">
-      <!-- Header -->
       <header class="dashboard-header">
         <div class="header-left">
           <button class="menu-toggle" aria-label="Toggle sidebar">
@@ -46,7 +39,6 @@
         </div>
       </header>
 
-      <!-- Content Area -->
       <main class="content-area">
         <div class="summary-cards">
           <div class="summary-card">
@@ -55,7 +47,7 @@
             </div>
             <div class="card-info">
               <h3>Total Tasks</h3>
-              <p>24</p>
+              <p>0</p>
             </div>
           </div>
           <div class="summary-card">
@@ -64,7 +56,7 @@
             </div>
             <div class="card-info">
               <h3>Completed</h3>
-              <p>12</p>
+              <p>0</p>
             </div>
           </div>
           <div class="summary-card">
@@ -73,7 +65,7 @@
             </div>
             <div class="card-info">
               <h3>Pending</h3>
-              <p>8</p>
+              <p>0</p>
             </div>
           </div>
           <div class="summary-card">
@@ -82,7 +74,7 @@
             </div>
             <div class="card-info">
               <h3>Deadline Near</h3>
-              <p>4</p>
+              <p>0</p>
             </div>
           </div>
         </div>
@@ -95,75 +87,10 @@
             </button>
           </div>
           <div class="tasks-list">
-            <div class="task-item">
-              <div class="task-checkbox">
-                <input type="checkbox" id="task1">
-                <label for="task1"></label>
-              </div>
-              <div class="task-details">
-                <h3 class="task-title">Design Homepage</h3>
-                <p class="task-desc">Create wireframes and mockups for the homepage</p>
-                <div class="task-meta">
-                  <span class="task-category"><i class="fas fa-folder"></i> WORK</span>
-                  <span class="status-badge status-in-progress"><i class="fas fa-spinner"></i> IN PROGRESS</span>
-                  <span class="task-deadline"><i class="fas fa-calendar"></i> Today, 18:00</span>
-                  <span class="task-reminder"><i class="fas fa-bell"></i> Remind at 17:00</span>
-                </div>
-              </div>
-              <div class="task-priority priority-urgent">URGENT</div>
-              <div class="task-actions">
-                <button class="edit-btn"><i class="fas fa-edit"></i></button>
-                <button class="delete-btn"><i class="fas fa-trash"></i></button>
-              </div>
-            </div>
-
-            <div class="task-item">
-              <div class="task-checkbox">
-                <input type="checkbox" id="task2">
-                <label for="task2"></label>
-              </div>
-              <div class="task-details">
-                <h3 class="task-title">Meeting with Client</h3>
-                <p class="task-desc">Discuss project requirements and timeline</p>
-                <div class="task-meta">
-                  <span class="task-category"><i class="fas fa-folder"></i> PERSONAL</span>
-                  <span class="status-badge status-not-started"><i class="fas fa-circle"></i> NOT STARTED</span>
-                  <span class="task-deadline"><i class="fas fa-calendar"></i> Tomorrow, 10:00</span>
-                  <span class="task-reminder"><i class="fas fa-bell"></i> Remind at 09:00</span>
-                </div>
-              </div>
-              <div class="task-priority priority-important">IMPORTANT</div>
-              <div class="task-actions">
-                <button class="edit-btn"><i class="fas fa-edit"></i></button>
-                <button class="delete-btn"><i class="fas fa-trash"></i></button>
-              </div>
-            </div>
-
-            <div class="task-item">
-              <div class="task-checkbox">
-                <input type="checkbox" id="task3" checked>
-                <label for="task3"></label>
-              </div>
-              <div class="task-details">
-                <h3 class="task-title">Write Documentation</h3>
-                <p class="task-desc">Document the new API endpoints</p>
-                <div class="task-meta">
-                  <span class="task-category"><i class="fas fa-folder"></i> WORK</span>
-                  <span class="status-badge status-completed"><i class="fas fa-check"></i> COMPLETED</span>
-                  <span class="task-deadline"><i class="fas fa-calendar"></i> Yesterday</span>
-                  <span class="task-reminder"><i class="fas fa-bell"></i> No reminder</span>
-                </div>
-              </div>
-              <div class="task-priority priority-not-urgent">NOT URGENT</div>
-              <div class="task-actions">
-                <button class="edit-btn"><i class="fas fa-edit"></i></button>
-                <button class="delete-btn"><i class="fas fa-trash"></i></button>
-              </div>
-            </div>
+            <!-- Tasks will be dynamically loaded here -->
           </div>
         </div>
 
-        <!-- Task History Section -->
         <div class="history-container">
           <div class="history-header" id="toggleHistory">
             <h2><i class="fas fa-history"></i> Completed Tasks History</h2>
@@ -172,113 +99,121 @@
             </button>
           </div>
           <div class="history-content" id="historyContent">
-            <div class="task-item completed">
-              <div class="task-checkbox">
-                <input type="checkbox" id="historyTask1" checked disabled>
-                <label for="historyTask1"></label>
-              </div>
-              <div class="task-details">
-                <h3 class="task-title">Write Documentation</h3>
-                <p class="task-desc">Document the new API endpoints</p>
-                <div class="task-meta">
-                  <span class="task-category"><i class="fas fa-folder"></i> WORK</span>
-                  <span class="status-badge status-completed"><i class="fas fa-check"></i> COMPLETED</span>
-                  <span class="task-deadline"><i class="fas fa-calendar"></i> Yesterday</span>
-                  <span class="completion-date"><i class="fas fa-flag-checkered"></i> Completed on Jun 2, 2025</span>
-                </div>
-              </div>
-              <div class="task-priority priority-not-urgent">NOT URGENT</div>
-            </div>
-            <div class="task-item completed">
-              <div class="task-checkbox">
-                <input type="checkbox" id="historyTask2" checked disabled>
-                <label for="historyTask2"></label>
-              </div>
-              <div class="task-details">
-                <h3 class="task-title">Setup Development Environment</h3>
-                <p class="task-desc">Install and configure all required tools</p>
-                <div class="task-meta">
-                  <span class="task-category"><i class="fas fa-folder"></i> WORK</span>
-                  <span class="status-badge status-completed"><i class="fas fa-check"></i> COMPLETED</span>
-                  <span class="task-deadline"><i class="fas fa-calendar"></i> May 31, 2025</span>
-                  <span class="completion-date"><i class="fas fa-flag-checkered"></i> Completed on May 31, 2025</span>
-                </div>
-              </div>
-              <div class="task-priority priority-important">IMPORTANT</div>
-            </div>
+            <!-- Completed tasks will be dynamically loaded here -->
           </div>
         </div>
 
-        <!-- Task Form Modal -->
         <div class="task-form-modal" id="taskFormModal">
           <div class="modal-content">
             <div class="modal-header">
-              <h3>Add New Task</h3>
-              <button class="close-modal"><i class="fas fa-times"></i></button>
+              <div class="modal-title-container">
+                <div class="modal-icon">
+                  <i class="fas fa-magic"></i>
+                </div>
+                <h3>Create New Task</h3>
+                <p class="modal-subtitle">Transform ideas into actionable items</p>
+              </div>
+              <button class="close-modal" type="button">
+                <i class="fas fa-times"></i>
+              </button>
             </div>
-            <form id="newTaskForm">
-              <div class="form-group">
-                <label for="taskTitle">Title</label>
-                <input type="text" id="taskTitle" required>
+            
+            <form id="newTaskForm" class="elegant-form">
+              <div class="form-section">
+                <div class="form-group floating-label">
+                  <input type="text" id="taskTitle" name="title" required class="form-input">
+                  <label for="taskTitle" class="form-label">Task Title</label>
+                  <div class="form-line"></div>
+                </div>
               </div>
-              <div class="form-group">
-                <label for="taskDescription">Description</label>
-                <textarea id="taskDescription" required></textarea>
+
+              <div class="form-section">
+                <div class="form-group floating-label">
+                  <textarea id="taskDescription" name="description" rows="4" class="form-input form-textarea"></textarea>
+                  <label for="taskDescription" class="form-label">Description</label>
+                  <div class="form-line"></div>
+                </div>
               </div>
+
               <div class="form-row">
-                <div class="form-group">
-                  <label for="taskCategory">Category</label>
-                  <select id="taskCategory" required>
-                    <option value="">Select Category</option>
-                    <option value="WORK">Work</option>
-                    <option value="PERSONAL">Personal</option>
-                    <option value="SHOPPING">Shopping</option>
-                    <option value="HEALTH">Health</option>
-                    <option value="EDUCATION">Education</option>
-                  </select>
+                <div class="form-group select-group">
+                  <label for="taskPriority" class="select-label">Priority Level</label>
+                  <div class="select-wrapper">
+                    <select id="taskPriority" name="priority" required class="form-select">
+                      <option value="">Choose priority...</option>
+                      <option value="URGENT" data-color="#FF4444">🔴 Urgent</option>
+                      <option value="IMPORTANT" data-color="#FF9500">🟠 Important</option>
+                      <option value="NOT_URGENT" data-color="#34C759">🟢 Not Urgent</option>
+                      <option value="NOT_IMPORTANT" data-color="#8E8E93">⚪ Not Important</option>
+                    </select>
+                    <div class="select-arrow">
+                      <i class="fas fa-chevron-down"></i>
+                    </div>
+                  </div>
                 </div>
-                <div class="form-group">
-                  <label for="taskPriority">Priority Matrix</label>
-                  <select id="taskPriority" required>
-                    <option value="">Select Priority</option>
-                    <option value="URGENT">Urgent</option>
-                    <option value="IMPORTANT">Important</option>
-                    <option value="NOT_URGENT">Not Urgent</option>
-                    <option value="NOT_IMPORTANT">Not Important</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="taskStatus">Status</label>
-                  <select id="taskStatus" required>
-                    <option value="NOT_STARTED">Not Started</option>
-                    <option value="IN_PROGRESS">In Progress</option>
-                    <option value="COMPLETED">Completed</option>
-                    <option value="ON_HOLD">On Hold</option>
-                    <option value="CANCELLED">Cancelled</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="taskDeadline">Deadline</label>
-                  <input type="datetime-local" id="taskDeadline" required>
+
+                <div class="form-group select-group">
+                  <label for="taskCategory" class="select-label">Category</label>
+                  <div class="select-wrapper">
+                    <select id="taskCategory" name="categoryId" class="form-select">
+                      <option value="">Select category...</option>
+                    </select>
+                    <div class="select-arrow">
+                      <i class="fas fa-chevron-down"></i>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="form-group">
-                <label for="taskReminder">Reminder</label>
-                <div class="reminder-inputs">
-                  <input type="datetime-local" id="taskReminder">
-                  <select id="reminderFrequency">
-                    <option value="ONCE">Once</option>
-                    <option value="DAILY">Daily</option>
-                    <option value="WEEKLY">Weekly</option>
-                    <option value="CUSTOM">Custom</option>
-                  </select>
+
+              <div class="form-section">
+                <div class="form-group datetime-group">
+                  <label for="taskDueDate" class="datetime-label">
+                    <i class="fas fa-calendar-alt"></i>
+                    Due Date & Time
+                  </label>
+                  <input type="datetime-local" id="taskDueDate" name="dueDate" class="form-datetime">
                 </div>
               </div>
+
+              <div class="form-section reminder-section">
+                <div class="section-header">
+                  <i class="fas fa-bell"></i>
+                  <span>Set Reminder</span>
+                  <div class="reminder-toggle">
+                    <input type="checkbox" id="enableReminder" class="toggle-switch">
+                    <label for="enableReminder" class="toggle-label"></label>
+                  </div>
+                </div>
+                
+                <div class="reminder-content" id="reminderContent">
+                  <div class="form-row">
+                    <div class="form-group datetime-group">
+                      <label for="reminderDateTime" class="datetime-label">
+                        <i class="fas fa-clock"></i>
+                        Remind me at
+                      </label>
+                      <input type="datetime-local" id="reminderDateTime" name="remindAt" class="form-datetime">
+                    </div>
+                  </div>
+                  
+                  <div class="form-group floating-label">
+                    <input type="text" id="reminderMessage" name="reminderMessage" class="form-input">
+                    <label for="reminderMessage" class="form-label">Custom reminder message (optional)</label>
+                    <div class="form-line"></div>
+                  </div>
+                </div>
+              </div>
+
               <div class="form-actions">
-                <button type="submit" class="btn-primary">Create Task</button>
-                <button type="button" class="btn-secondary close-modal">Cancel</button>
+                <button type="button" class="btn-secondary close-modal">
+                  Cancel
+                </button>
+                <button type="submit" class="btn-primary">
+                  <span class="btn-text">Create Task</span>
+                  <div class="btn-loader">
+                    <div class="spinner"></div>
+                  </div>
+                </button>
               </div>
             </form>
           </div>

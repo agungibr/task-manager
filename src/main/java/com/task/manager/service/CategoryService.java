@@ -1,13 +1,14 @@
-// service/CategoryService.java
 package com.task.manager.service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
 
 import com.task.manager.exception.CategoryNotFoundException;
 import com.task.manager.model.Category;
 import com.task.manager.repository.CategoryRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

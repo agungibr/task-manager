@@ -232,11 +232,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                     
                     if (response.ok) {
+                        const userData = await response.json();
+                        
+                        localStorage.setItem('currentUser', JSON.stringify({
+                            userId: userData.userId,
+                            username: userData.username,
+                            email: userData.email,
+                            loginTime: new Date().toISOString()
+                        }));
+                        
                         showSuccessAnimation();
                         setTimeout(() => {
-                            window.location.href = '../templates/dashboard.html';
+                            window.location.href = '../dashboard.html';
                         }, 2000);
                     } else {
+                        const errorMessage = await response.text();
+                        showCustomAlert(errorMessage || 'Invalid email or password.', 'error');
                         showErrorAnimation();
                     }
                     
