@@ -1,27 +1,34 @@
 # Task Manager
 
-**Productivity. Simplified.**
+## Productivity Simplified
+
+Where efficiency meets elegance
 
 ---
 
-## What We Built
+## 🚀 What We Built
 
-A web application that transforms how you manage tasks. Clean. Intuitive. Powerful.
+> A web application that **transforms** how you manage tasks.  
+> Clean. Intuitive. Powerful.
 
-Built with Spring Boot and PostgreSQL, designed for those who value both function and form.
+Built with **Spring Boot** and **PostgreSQL**, designed for those who value both function and form.
 
-## The Experience
+## ✨ The Experience
 
-**Dashboard That Breathes**  
+### 🎯 Dashboard That Breathes
+
 Real-time task management with elegant animations and responsive design.
 
-**Smart Organization**  
+### 📋 Smart Organization
+
 Categories, priorities, and deadlines that adapt to your workflow.
 
-**Never Miss a Beat**  
+### ⚡ Never Miss a Beat
+
 Intelligent reminders that keep you ahead of what matters.
 
-**Your Data, Secure**  
+### 🔒 Your Data, Secure
+
 PostgreSQL database with encrypted authentication. Your privacy protected.
 
 ## Technology Stack
@@ -51,14 +58,16 @@ Registration and login with enterprise-grade security.
 
 ## Getting Started
 
-**Prerequisites**
+### Prerequisites
+
 - Java 17+
 - Maven 3.6+
 - PostgreSQL database
 
-**Quick Start**
+### Quick Start
+
 ```bash
-git clone <repository-url>
+git clone https://github.com/agungibr/task-manager.git
 cd task-manager
 mvn spring-boot:run
 ```
@@ -68,24 +77,28 @@ Navigate to `http://localhost:8080` and experience productivity redefined.
 ## Database Configuration
 
 Configure your PostgreSQL connection in `application.properties`:
+
 - Database URL, username, and password
 - Automatic schema updates with Hibernate DDL
 - Connection pooling optimized for performance
 
 ## API Architecture
 
-**RESTful Design**  
+### RESTful Design
+
 Clean endpoints for tasks, categories, users, and reminders.
 
-**Real-time Updates**  
+### Real-time Updates
+
 Dynamic content loading without page refreshes.
 
-**Error Handling**  
+### Error Handling
+
 Graceful degradation with user-friendly messaging.
 
 ## Project Structure
 
-```
+```text
 src/
 ├── main/java/com/task/manager/
 │   ├── controller/     # REST API endpoints
@@ -114,7 +127,6 @@ src/
 
 ---
 
-**Task Manager**  
 *Where productivity meets elegance.*
 
 Built with precision. Designed for impact.
