@@ -1,19 +1,17 @@
 package com.task.manager.service;
 
-import java.util.List;
-
+import com.task.manager.exception.TaskNotFoundException;
+import com.task.manager.model.*;
+import com.task.manager.repository.TaskRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import com.task.manager.exception.TaskNotFoundException;
-import com.task.manager.model.Task;
-import com.task.manager.repository.TaskRepository;
-
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class TaskService {
-
     private final TaskRepository taskRepository;
 
     public List<Task> getAllTasks() {
@@ -39,6 +37,17 @@ public class TaskService {
                     task.setTitle(updatedTask.getTitle());
                     task.setDescription(updatedTask.getDescription());
                     task.setDueDate(updatedTask.getDueDate());
+                    task.setPriority(updatedTask.getPriority());
+                    task.setCategory(updatedTask.getCategory());
+                    return taskRepository.save(task);
+                })
+                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
+    }
+
+    public Task markTaskAsCompleted(Long id) {
+        return taskRepository.findById(id)
+                .map(task -> {
+                    task.setCompletedAt(LocalDateTime.now());
                     return taskRepository.save(task);
                 })
                 .orElseThrow(() -> new TaskNotFoundException("Task not found"));
