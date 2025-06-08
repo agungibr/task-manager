@@ -233,9 +233,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     if (response.ok) {
                         showSuccessAnimation();
-                        
                         setTimeout(() => {
-                            window.location.href = '../index.html';
+                            window.location.href = '../templates/dashboard.html';
                         }, 2000);
                     } else {
                         showErrorAnimation();
