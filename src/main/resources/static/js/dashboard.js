@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeEditForm();
     initializeDeleteConfirmation();
     initializeHistory();
+    initializeCategoryManagement();
     loadUserData();
     
     const logoutBtn = document.querySelector('.logout');
@@ -1106,3 +1107,380 @@ function testFormValidation() {
 }
 
 window.testFormValidation = testFormValidation;
+
+let currentCategoryId = null;
+function initializeCategoryManagement() {
+    console.log('Initializing category management...');
+    
+    initializeNavigation();
+    
+    initializeCategoryForms();
+    
+    initializeCategoryActions();
+}
+
+function initializeNavigation() {
+    const navLinks = document.querySelectorAll('.nav-link');
+    const tasksContainer = document.querySelector('.tasks-container');
+    const categoriesContainer = document.querySelector('.categories-container');
+    const historyContainer = document.querySelector('.history-container');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            navLinks.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+            
+            const section = this.dataset.section;
+            
+            if (section === 'tasks') {
+                tasksContainer.style.display = 'block';
+                categoriesContainer.style.display = 'none';
+                historyContainer.style.display = 'block';
+            } else if (section === 'categories') {
+                tasksContainer.style.display = 'none';
+                categoriesContainer.style.display = 'block';
+                historyContainer.style.display = 'none';
+                loadCategories();
+            }
+        });
+    });
+}
+
+function initializeCategoryForms() {
+    const addCategoryBtn = document.querySelector('.add-category-btn');
+    if (addCategoryBtn) {
+        addCategoryBtn.addEventListener('click', function() {
+            openCategoryModal();
+        });
+    }
+    
+    const newCategoryForm = document.getElementById('newCategoryForm');
+    if (newCategoryForm) {
+        newCategoryForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            createCategory();
+        });
+    }
+    
+    const editCategoryForm = document.getElementById('editCategoryForm');
+    if (editCategoryForm) {
+        editCategoryForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            updateCategory();
+        });
+    }
+    
+    const closeCategoryModal = document.querySelector('.close-category-modal');
+    if (closeCategoryModal) {
+        closeCategoryModal.addEventListener('click', closeCategoryFormModal);
+    }
+    
+    const closeEditCategoryModal = document.querySelector('.close-edit-category-modal');
+    if (closeEditCategoryModal) {
+        closeEditCategoryModal.addEventListener('click', closeEditCategoryFormModal);
+    }
+    
+    const categoryModal = document.getElementById('categoryFormModal');
+    const editCategoryModal = document.getElementById('editCategoryFormModal');
+    
+    if (categoryModal) {
+        categoryModal.addEventListener('click', function(e) {
+            if (e.target === this) closeCategoryFormModal();
+        });
+    }
+    
+    if (editCategoryModal) {
+        editCategoryModal.addEventListener('click', function(e) {
+            if (e.target === this) closeEditCategoryFormModal();
+        });
+    }
+}
+
+function initializeCategoryActions() {
+    const cancelCategoryDelete = document.querySelector('.cancel-category-delete');
+    const confirmCategoryDelete = document.querySelector('.confirm-category-delete');
+    const deleteCategoryModal = document.getElementById('deleteCategoryConfirmModal');
+    
+    if (cancelCategoryDelete) {
+        cancelCategoryDelete.addEventListener('click', closeCategoryDeleteModal);
+    }
+    
+    if (confirmCategoryDelete) {
+        confirmCategoryDelete.addEventListener('click', confirmDeleteCategory);
+    }
+    
+    if (deleteCategoryModal) {
+        deleteCategoryModal.addEventListener('click', function(e) {
+            if (e.target === this) closeCategoryDeleteModal();
+        });
+    }
+}
+
+async function loadCategories() {
+    if (!currentUserId) {
+        console.error('No user ID available');
+        return;
+    }
+
+    try {
+        console.log('Loading categories for user:', currentUserId);
+        const response = await fetch(`/api/categories/user/${currentUserId}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const categories = await response.json();
+        console.log('Categories loaded:', categories);
+        
+        categoriesData = categories;
+        renderCategories(categories);
+    } catch (error) {
+        console.error('Error loading categories:', error);
+        showCustomAlert('Failed to load categories. Please try again.', 'error');
+    }
+}
+
+function renderCategories(categories) {
+    const categoriesGrid = document.querySelector('.categories-grid');
+    
+    if (!categoriesGrid) {
+        console.error('Categories grid not found');
+        return;
+    }
+    
+    if (!categories || categories.length === 0) {
+        categoriesGrid.innerHTML = `
+            <div class="categories-empty">
+                <i class="fas fa-folder-open"></i>
+                <h3>No categories yet</h3>
+                <p>Create your first category to organize your tasks better</p>
+            </div>
+        `;
+        return;
+    }
+    
+    categoriesGrid.innerHTML = categories.map(category => {
+        const taskCount = getTaskCountForCategory(category.id);
+        return `
+            <div class="category-card">
+                <div class="category-header">
+                    <div class="category-info">
+                        <h3>${escapeHtml(category.name)}</h3>
+                    </div>
+                    <div class="category-actions">
+                        <button class="category-action-btn edit-category-btn" onclick="editCategory(${category.id})" title="Edit Category">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="category-action-btn delete-category-btn" onclick="deleteCategory(${category.id})" title="Delete Category">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="category-stats">
+                    <div class="category-stat">
+                        <i class="fas fa-tasks"></i>
+                        <span>${taskCount} tasks</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function getTaskCountForCategory(categoryId) {
+    return 0;
+}
+
+async function createCategory() {
+    if (!currentUserId) {
+        console.error('No user ID available');
+        return;
+    }
+
+    const form = document.getElementById('newCategoryForm');
+    const formData = new FormData(form);
+    
+    const categoryData = {
+        name: formData.get('name'),
+        userId: currentUserId
+    };
+
+    console.log('Creating category:', categoryData);
+
+    try {
+        const response = await fetch('/api/categories', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(categoryData)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const newCategory = await response.json();
+        console.log('Category created:', newCategory);
+        
+        showCustomAlert(`Category "${categoryData.name}" created successfully! 🎉`, 'success');
+        closeCategoryFormModal();
+        form.reset();
+        
+        loadCategories();
+        
+    } catch (error) {
+        console.error('Error creating category:', error);
+        showCustomAlert('Failed to create category. Please try again.', 'error');
+    }
+}
+
+async function editCategory(categoryId) {
+    const category = categoriesData.find(c => c.id === categoryId);
+    if (!category) {
+        console.error('Category not found:', categoryId);
+        return;
+    }
+
+    currentCategoryId = categoryId;
+    
+    document.getElementById('editCategoryName').value = category.name;
+    
+    const editModal = document.getElementById('editCategoryFormModal');
+    if (editModal) {
+        editModal.classList.add('active');
+    }
+}
+
+async function updateCategory() {
+    if (!currentUserId || !currentCategoryId) {
+        console.error('Missing user ID or category ID');
+        return;
+    }
+
+    const form = document.getElementById('editCategoryForm');
+    const formData = new FormData(form);
+    
+    const categoryData = {
+        name: formData.get('name'),
+        userId: currentUserId
+    };
+
+    console.log('Updating category:', currentCategoryId, categoryData);
+
+    try {
+        const response = await fetch(`/api/categories/${currentCategoryId}?userId=${currentUserId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(categoryData)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const updatedCategory = await response.json();
+        console.log('Category updated:', updatedCategory);
+        
+        showCustomAlert(`Category "${categoryData.name}" updated successfully! ✨`, 'success');
+        closeEditCategoryFormModal();
+        
+        loadCategories();
+        
+    } catch (error) {
+        console.error('Error updating category:', error);
+        showCustomAlert('Failed to update category. Please try again.', 'error');
+    }
+}
+
+function deleteCategory(categoryId) {
+    const category = categoriesData.find(c => c.id === categoryId);
+    if (!category) {
+        console.error('Category not found:', categoryId);
+        return;
+    }
+
+    currentCategoryId = categoryId;
+    
+    document.getElementById('deleteCategoryTitle').textContent = category.name;
+    
+    const deleteModal = document.getElementById('deleteCategoryConfirmModal');
+    if (deleteModal) {
+        deleteModal.classList.add('active');
+    }
+}
+
+async function confirmDeleteCategory() {
+    if (!currentUserId || !currentCategoryId) {
+        console.error('Missing user ID or category ID');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/categories/${currentCategoryId}?userId=${currentUserId}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const category = categoriesData.find(c => c.id === currentCategoryId);
+        const categoryName = category ? category.name : 'Category';
+        
+        showCustomAlert(`${categoryName} deleted successfully! 🗑️`, 'success');
+        closeCategoryDeleteModal();
+        
+        loadCategories();
+        
+    } catch (error) {
+        console.error('Error deleting category:', error);
+        showCustomAlert('Failed to delete category. Please try again.', 'error');
+    }
+}
+
+function openCategoryModal() {
+    const modal = document.getElementById('categoryFormModal');
+    if (modal) {
+        modal.classList.add('active');
+    }
+}
+
+function closeCategoryFormModal() {
+    const modal = document.getElementById('categoryFormModal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
+}
+
+function closeEditCategoryFormModal() {
+    const modal = document.getElementById('editCategoryFormModal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
+    currentCategoryId = null;
+}
+
+function closeCategoryDeleteModal() {
+    const modal = document.getElementById('deleteCategoryConfirmModal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
+    currentCategoryId = null;
+}
+
+function escapeHtml(text) {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+}

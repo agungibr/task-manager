@@ -23,6 +23,19 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
+    public Category updateCategory(Long id, Category categoryData, Long userId) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
+        
+        if (!category.getUserId().equals(userId)) {
+            throw new CategoryNotFoundException("Category not found for this user");
+        }
+        
+        category.setName(categoryData.getName());
+        
+        return categoryRepository.save(category);
+    }
+
     public void deleteCategory(Long id, Long userId) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
