@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', function() {
     checkAuthentication();
     initializeDashboard();
     initializeElegantForm();
+    initializeEditForm();
+    initializeDeleteConfirmation();
     initializeHistory();
     loadUserData();
     
@@ -72,7 +74,7 @@ async function loadUserData() {
         console.log('User data loaded successfully');
     } catch (error) {
         console.error('Error loading user data:', error);
-        showNotification('Error loading data. Please refresh the page.', 'error');
+        showCustomAlert('❌ Loading Error', 'Error loading data. Please refresh the page.', 'error');
     }
 }
 
@@ -192,7 +194,7 @@ function checkFloatingLabel(input) {
 }
 
 function initializeFormValidation() {
-    const inputs = document.querySelectorAll('.form-input, .form-select, .form-datetime');
+    const inputs = document.querySelectorAll('#newTaskForm .form-input, #newTaskForm .form-select, #newTaskForm .form-datetime');
     
     inputs.forEach(input => {
         input.addEventListener('blur', function() {
@@ -209,7 +211,7 @@ function validateField(field) {
     const isValid = field.checkValidity();
     const wrapper = field.closest('.form-group') || field.closest('.select-wrapper') || field.closest('.datetime-group');
     
-    if (!isValid && field.value) {
+    if (!isValid) {
         wrapper?.classList.add('error');
     } else {
         wrapper?.classList.remove('error');
@@ -229,20 +231,44 @@ async function handleFormSubmission() {
     const btnText = submitBtn.querySelector('.btn-text');
     const btnLoader = submitBtn.querySelector('.btn-loader');
     
+    console.log('=== FORM SUBMISSION STARTED ===');
+    
+    const title = document.getElementById('taskTitle').value.trim();
+    const priority = document.getElementById('taskPriority').value;
+    
+    console.log('Quick validation check:');
+    console.log('Title:', title);
+    console.log('Priority:', priority);
+    
+    if (!title) {
+        console.log('❌ Title is empty');
+        showCustomAlert('❌ Title Required', 'Please enter a task title.', 'error');
+        return;
+    }
+    
+    if (!priority) {
+        console.log('❌ Priority is empty');
+        showCustomAlert('❌ Priority Required', 'Please select a priority level.', 'error');
+        return;
+    }
+    
+    console.log('✅ Basic validation passed, proceeding with full validation');
+    
     const isFormValid = validateForm();
     if (!isFormValid) {
-        showFormError('Please fill in all required fields correctly.');
+        showCustomAlert('❌ Form Invalid', 'Please fill in all required fields correctly.', 'error');
         return;
     }
     
     submitBtn.classList.add('loading');
     submitBtn.disabled = true;
+    showCustomAlert('📝 Creating Task', 'Please wait while we create your new task...', 'info');
     
     try {
         const taskData = collectFormData();
         await createTask(taskData);
         
-        showFormSuccess('Task created successfully!');
+        showCustomAlert('🎉 Success!', `Task "${taskData.title}" has been created successfully! You can view it in your task list below.`, 'success');
         setTimeout(() => {
             document.querySelector('.task-form-modal').classList.remove('active');
             form.reset();
@@ -251,7 +277,7 @@ async function handleFormSubmission() {
         
     } catch (error) {
         console.error('Error creating task:', error);
-        showFormError('Failed to create task. Please try again.');
+        showCustomAlert('❌ Creation Failed', 'Failed to create task. Please try again.', 'error');
     } finally {
         submitBtn.classList.remove('loading');
         submitBtn.disabled = false;
@@ -259,14 +285,42 @@ async function handleFormSubmission() {
 }
 
 function validateForm() {
-    const requiredFields = document.querySelectorAll('[required]');
+    const requiredFields = document.querySelectorAll('#newTaskForm [required]');
     let isValid = true;
+    let invalidFields = [];
+    
+    console.log('=== FORM VALIDATION DEBUG ===');
+    console.log('Found required fields:', requiredFields);
     
     requiredFields.forEach(field => {
-        if (!validateField(field)) {
+        const fieldValid = field.checkValidity();
+        const fieldValue = field.value;
+        
+        console.log(`Field: ${field.id || field.name}`, {
+            value: fieldValue,
+            isValid: fieldValid,
+            type: field.type,
+            tagName: field.tagName
+        });
+        
+        if (!fieldValid) {
             isValid = false;
+            invalidFields.push({
+                id: field.id || field.name || 'Unknown field',
+                value: fieldValue,
+                reason: field.validationMessage
+            });
         }
+        
+        validateField(field);
     });
+    
+    if (!isValid) {
+        console.log('❌ Form validation failed!');
+        console.log('Invalid fields:', invalidFields);
+    } else {
+        console.log('✅ Form validation passed!');
+    }
     
     return isValid;
 }
@@ -282,6 +336,13 @@ function collectFormData() {
         dueDate: document.getElementById('taskDueDate').value || null
     };
     
+    console.log('=== FORM DATA COLLECTION DEBUG ===');
+    console.log('Collected task data:', taskData);
+    console.log('Priority field element:', document.getElementById('taskPriority'));
+    console.log('Priority value from element:', document.getElementById('taskPriority').value);
+    console.log('Priority selected index:', document.getElementById('taskPriority').selectedIndex);
+    console.log('Reminder enabled:', reminderEnabled);
+    
     if (reminderEnabled) {
         const remindAt = document.getElementById('reminderDateTime').value;
         const reminderMessage = document.getElementById('reminderMessage').value.trim();
@@ -295,6 +356,7 @@ function collectFormData() {
         }
     }
     
+    console.log('Final task data with reminders:', taskData);
     return taskData;
 }    async function createTask(taskData) {
     try {
@@ -460,6 +522,70 @@ function initializeHistory() {
     }
 }
 
+function initializeEditForm() {
+    const editFormModal = document.getElementById('editTaskFormModal');
+    const closeEditModalBtns = document.querySelectorAll('.close-edit-modal');
+    const editForm = document.getElementById('editTaskForm');
+    
+    if (closeEditModalBtns) {
+        closeEditModalBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                editFormModal.classList.remove('active');
+                setTimeout(() => {
+                    editForm.reset();
+                }, 300);
+            });
+        });
+    }
+    
+    editFormModal?.addEventListener('click', (e) => {
+        if (e.target === editFormModal) {
+            editFormModal.classList.remove('active');
+            setTimeout(() => {
+                editForm.reset();
+            }, 300);
+        }
+    });
+    
+    if (editForm) {
+        editForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleEditFormSubmission();
+        });
+    }
+    
+    const editInputs = document.querySelectorAll('#editTaskForm .form-input');
+    editInputs.forEach(input => {
+        input.addEventListener('input', () => updateEditFormLabels());
+        input.addEventListener('focus', () => updateEditFormLabels());
+        input.addEventListener('blur', () => updateEditFormLabels());
+    });
+}
+
+function initializeDeleteConfirmation() {
+    const deleteModal = document.getElementById('deleteConfirmModal');
+    const cancelDeleteBtn = document.querySelector('.cancel-delete');
+    const confirmDeleteBtn = document.querySelector('.confirm-delete');
+    
+    cancelDeleteBtn?.addEventListener('click', () => {
+        deleteModal.classList.remove('active');
+        taskToDelete = null;
+        showCustomAlert('🚫 Delete Cancelled', 'Task deletion was cancelled', 'info');
+    });
+    
+    confirmDeleteBtn?.addEventListener('click', () => {
+        confirmDelete();
+    });
+    
+    deleteModal?.addEventListener('click', (e) => {
+        if (e.target === deleteModal) {
+            deleteModal.classList.remove('active');
+            taskToDelete = null;
+            showCustomAlert('🚫 Delete Cancelled', 'Task deletion was cancelled', 'info');
+        }
+    });
+}
+
 function updateTaskCounts() {
     const allTasks = document.querySelectorAll('.task-item');
     const completedTasks = document.querySelectorAll('.task-item.completed');
@@ -527,7 +653,7 @@ async function loadTasks() {
         
     } catch (error) {
         console.error('Error loading tasks:', error);
-        showNotification('Error loading tasks. Please refresh the page.', 'error');
+        showCustomAlert('❌ Loading Error', 'Error loading tasks. Please refresh the page.', 'error');
     }
 }
 
@@ -613,6 +739,8 @@ function createTaskElement(task, isCompleted = false) {
 
 async function markTaskAsCompleted(taskId) {
     try {
+        showCustomAlert('✅ Completing Task', 'Marking task as completed...', 'info');
+        
         const response = await fetch(`/api/tasks/${taskId}/complete`, {
             method: 'PATCH',
             headers: {
@@ -625,23 +753,50 @@ async function markTaskAsCompleted(taskId) {
         }
 
         await loadTasks();
-        showNotification('Task marked as completed!', 'success');
+        showCustomAlert('🎉 Congratulations!', 'Excellent work! Your task has been completed and moved to the history section.', 'success');
 
     } catch (error) {
         console.error('Error completing task:', error);
-        showNotification('Error completing task. Please try again.', 'error');
+        showCustomAlert('❌ Complete Failed', 'Failed to mark task as completed. Please try again.', 'error');
         const checkbox = document.querySelector(`input[id="task${taskId}"]`);
         if (checkbox) checkbox.checked = false;
     }
 }
 
-async function deleteTask(taskId) {
-    if (!confirm('Are you sure you want to delete this task?')) {
-        return;
-    }
+let taskToDelete = null;
 
+async function deleteTask(taskId) {
+    const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
+    if (!taskElement) return;
+    
+    const taskTitle = taskElement.querySelector('.task-title').textContent;
+    const taskDesc = taskElement.querySelector('.task-desc').textContent || 'No description';
+    
+    taskToDelete = taskId;
+    
+    showDeleteConfirmation(taskTitle, taskDesc);
+}
+
+function showDeleteConfirmation(title, description) {
+    const deleteModal = document.getElementById('deleteConfirmModal');
+    const titleElement = document.getElementById('deleteTaskTitle');
+    const descElement = document.getElementById('deleteTaskDesc');
+    
+    titleElement.textContent = title;
+    descElement.textContent = description;
+    
+    deleteModal.classList.add('active');
+    
+    showCustomAlert('⚠️ Deletion Confirmation', 'Please confirm if you want to delete this task', 'warning');
+}
+
+async function confirmDelete() {
+    if (!taskToDelete) return;
+    
     try {
-        const response = await fetch(`/api/tasks/${taskId}`, {
+        showCustomAlert('🗑️ Deleting Task', 'Please wait while we delete your task...', 'info');
+        
+        const response = await fetch(`/api/tasks/${taskToDelete}`, {
             method: 'DELETE'
         });
 
@@ -649,7 +804,7 @@ async function deleteTask(taskId) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
+        const taskElement = document.querySelector(`[data-task-id="${taskToDelete}"]`);
         if (taskElement) {
             taskElement.style.transition = 'all 0.3s ease';
             taskElement.style.opacity = '0';
@@ -661,16 +816,210 @@ async function deleteTask(taskId) {
             }, 300);
         }
 
-        showNotification('Task deleted successfully!', 'success');
+        document.getElementById('deleteConfirmModal').classList.remove('active');
+        
+        showCustomAlert('✅ Task Deleted', 'Your task has been permanently deleted and removed from your task list', 'success');
+        taskToDelete = null;
 
     } catch (error) {
         console.error('Error deleting task:', error);
-        showNotification('Error deleting task. Please try again.', 'error');
+        showCustomAlert('❌ Delete Failed', 'Failed to delete task. Please try again.', 'error');
     }
 }
 
 async function editTask(taskId) {
-    console.log('Edit task:', taskId);
+    try {
+        showCustomAlert('📝 Loading Task', 'Loading task details for editing...', 'info');
+        
+        const response = await fetch(`/api/tasks/${taskId}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const task = await response.json();
+        console.log('Loaded task for editing:', task);
+        
+        populateEditForm(task);
+        
+        const editModal = document.getElementById('editTaskFormModal');
+        editModal.classList.add('active');
+        
+        showCustomAlert('✏️ Edit Mode Active', 'Task details loaded successfully. Edit any field below and save your changes.', 'success');
+        
+    } catch (error) {
+        console.error('Error loading task for edit:', error);
+        showCustomAlert('❌ Load Failed', 'Failed to load task details. Please try again.', 'error');
+    }
+}
+
+function populateEditForm(task) {
+    document.getElementById('editTaskId').value = task.id;
+    document.getElementById('editTaskTitle').value = task.title || '';
+    document.getElementById('editTaskDescription').value = task.description || '';
+    document.getElementById('editTaskPriority').value = task.priority || '';
+    document.getElementById('editTaskCategory').value = task.category?.id || '';
+    
+    if (task.dueDate) {
+        const dueDate = new Date(task.dueDate);
+        const formattedDate = dueDate.toISOString().slice(0, 16);
+        document.getElementById('editTaskDueDate').value = formattedDate;
+    } else {
+        document.getElementById('editTaskDueDate').value = '';
+    }
+    
+    populateEditCategoryDropdown();
+    
+    setTimeout(() => {
+        updateEditFormLabels();
+    }, 100);
+}
+
+function populateEditCategoryDropdown() {
+    const editCategorySelect = document.getElementById('editTaskCategory');
+    if (editCategorySelect && categoriesData) {
+        while (editCategorySelect.children.length > 1) {
+            editCategorySelect.removeChild(editCategorySelect.lastChild);
+        }
+        
+        categoriesData.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.id;
+            option.textContent = category.name;
+            editCategorySelect.appendChild(option);
+        });
+    }
+}
+
+function updateEditFormLabels() {
+    const inputs = document.querySelectorAll('#editTaskForm .form-input');
+    inputs.forEach(input => {
+        const label = input.nextElementSibling;
+        if (label && label.classList.contains('form-label')) {
+            if (input.value.trim() !== '') {
+                label.classList.add('active');
+            } else {
+                label.classList.remove('active');
+            }
+        }
+    });
+}
+
+async function handleEditFormSubmission() {
+    const form = document.getElementById('editTaskForm');
+    const submitBtn = form.querySelector('.btn-primary');
+    
+    const isValid = validateEditForm();
+    if (!isValid) {
+        showCustomAlert('❌ Validation Error', 'Please fill in all required fields correctly.', 'error');
+        return;
+    }
+    
+    submitBtn.classList.add('loading');
+    submitBtn.disabled = true;
+    showCustomAlert('💾 Updating Task', 'Saving your changes...', 'info');
+    
+    try {
+        const taskData = collectEditFormData();
+        const taskId = document.getElementById('editTaskId').value;
+        
+        const response = await fetch(`/api/tasks/${taskId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(taskData)
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Update task error:', errorText);
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const updatedTask = await response.json();
+        console.log('Updated task:', updatedTask);
+        
+        document.getElementById('editTaskFormModal').classList.remove('active');
+        await loadTasks();
+        
+        showCustomAlert('✅ Update Complete', `Task "${taskData.title}" has been successfully updated with your changes!`, 'success');
+        
+    } catch (error) {
+        console.error('Error updating task:', error);
+        showCustomAlert('❌ Update Failed', 'Failed to update task. Please try again.', 'error');
+    } finally {
+        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
+    }
+}
+
+function validateEditForm() {
+    const title = document.getElementById('editTaskTitle').value.trim();
+    const priority = document.getElementById('editTaskPriority').value;
+    
+    return title.length > 0 && priority.length > 0;
+}
+
+function collectEditFormData() {
+    const taskData = {
+        userId: currentUserId,
+        title: document.getElementById('editTaskTitle').value.trim(),
+        description: document.getElementById('editTaskDescription').value.trim(),
+        priority: document.getElementById('editTaskPriority').value,
+        categoryId: document.getElementById('editTaskCategory').value || null,
+        dueDate: document.getElementById('editTaskDueDate').value || null
+    };
+    
+    if (taskData.categoryId) {
+        taskData.category = { id: taskData.categoryId };
+    }
+    
+    return taskData;
+}
+
+function showCustomAlert(title, message, type = 'info') {
+    const existingAlerts = document.querySelectorAll('.custom-alert');
+    existingAlerts.forEach(alert => alert.remove());
+    
+    const alertElement = document.createElement('div');
+    alertElement.className = `custom-alert ${type}`;
+    
+    const iconMap = {
+        success: 'fas fa-check-circle',
+        error: 'fas fa-exclamation-circle',
+        warning: 'fas fa-exclamation-triangle',
+        info: 'fas fa-info-circle'
+    };
+    
+    alertElement.innerHTML = `
+        <div class="alert-icon">
+            <i class="${iconMap[type] || iconMap.info}"></i>
+        </div>
+        <div class="alert-content">
+            <div class="alert-title">${title}</div>
+            <div class="alert-message">${message}</div>
+        </div>
+        <button class="alert-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    document.body.appendChild(alertElement);
+    
+    setTimeout(() => {
+        alertElement.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        if (alertElement.parentElement) {
+            alertElement.classList.remove('show');
+            setTimeout(() => {
+                if (alertElement.parentElement) {
+                    alertElement.remove();
+                }
+            }, 400);
+        }
+    }, 5000);
 }
 
 async function createReminder(taskId, reminderData) {
@@ -720,6 +1069,40 @@ function showNotification(message, type = 'info') {
 }
 
 function logout() {
-    localStorage.removeItem('currentUser');
-    window.location.href = 'auth/login.html';
+    showCustomAlert('👋 Logging Out', 'Thank you for using Task Manager. See you soon!', 'info');
+    
+    setTimeout(() => {
+        localStorage.removeItem('currentUser');
+        window.location.href = 'auth/login.html';
+    }, 1500);
 }
+
+function testFormValidation() {
+    console.log('=== MANUAL FORM TEST ===');
+    
+    const titleField = document.getElementById('taskTitle');
+    const priorityField = document.getElementById('taskPriority');
+    
+    console.log('Title field:', {
+        element: titleField,
+        value: titleField?.value,
+        required: titleField?.required,
+        validity: titleField?.checkValidity()
+    });
+    
+    console.log('Priority field:', {
+        element: priorityField,
+        value: priorityField?.value,
+        required: priorityField?.required,
+        validity: priorityField?.checkValidity(),
+        selectedIndex: priorityField?.selectedIndex,
+        selectedOption: priorityField?.options[priorityField?.selectedIndex]?.text
+    });
+    
+    const form = document.getElementById('newTaskForm');
+    console.log('Form validity:', form?.checkValidity());
+    
+    return validateForm();
+}
+
+window.testFormValidation = testFormValidation;

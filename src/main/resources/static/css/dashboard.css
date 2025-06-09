@@ -1087,3 +1087,252 @@ body {
     opacity: 1;
   }
 }
+
+#editTaskFormModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+#editTaskFormModal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.edit-modal-content {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 0;
+  width: 90%;
+  max-width: 680px;
+  max-height: 90vh;
+  overflow: hidden;
+  transform: scale(0.9) translateY(20px);
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.15),
+    0 8px 25px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.edit-modal-content.active {
+  transform: scale(1) translateY(0);
+}
+
+.confirmation-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.confirmation-modal.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.confirmation-content {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  transform: scale(0.9) translateY(20px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: center;
+}
+
+.confirmation-modal.active .confirmation-content {
+  transform: scale(1) translateY(0);
+}
+
+.confirmation-header {
+  margin-bottom: 1.5rem;
+}
+
+.confirmation-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 111, 97, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+.confirmation-icon i {
+  font-size: 2.5rem;
+  color: #FF6F61;
+}
+
+.confirmation-header h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5rem;
+  color: #2D3748;
+  margin: 0 0 0.5rem;
+}
+
+.confirmation-header p {
+  color: #718096;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.confirmation-task-info {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.confirmation-task-info h4 {
+  color: #4E71FF;
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.confirmation-task-info p {
+  color: #666;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.confirmation-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF5252 100%);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #FF5252 0%, #F44336 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+}
+
+.btn-danger:active {
+  transform: translateY(0);
+}
+
+.custom-alert {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 300px;
+  transform: translateX(100%);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-left: 4px solid #4E71FF;
+}
+
+.custom-alert.show {
+  transform: translateX(0);
+}
+
+.custom-alert.success {
+  border-left-color: #10B981;
+}
+
+.custom-alert.success .alert-icon {
+  color: #10B981;
+}
+
+.custom-alert.error {
+  border-left-color: #EF4444;
+}
+
+.custom-alert.error .alert-icon {
+  color: #EF4444;
+}
+
+.custom-alert.warning {
+  border-left-color: #F59E0B;
+}
+
+.custom-alert.warning .alert-icon {
+  color: #F59E0B;
+}
+
+.alert-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.alert-content {
+  flex: 1;
+}
+
+.alert-title {
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+  color: #2D3748;
+  font-size: 0.9rem;
+}
+
+.alert-message {
+  margin: 0;
+  color: #718096;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.alert-close {
+  background: none;
+  border: none;
+  color: #A0AEC0;
+  cursor: pointer;
+  padding: 0;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+}
+
+.alert-close:hover {
+  color: #718096;
+}
